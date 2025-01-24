@@ -81,7 +81,7 @@ public class Logger {
      * @param message The error message.
      */
     public void error(Class<?> c, String message) {
-        System.out.println(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + message);
+        System.err.println(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + message);
         write(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + message);
     }
 
@@ -92,7 +92,7 @@ public class Logger {
      * @param e The exception.
      */
     public void error(Class<?> c, Exception e) {
-        System.out.println(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e.toString());
+        System.err.println(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e.toString());
         write(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
     }
 

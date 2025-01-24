@@ -9,6 +9,7 @@ import cz.meind.service.asynch.Daemon;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +35,8 @@ public class Application {
     public static ObjectMapper mapper;
 
     public static DatabaseContext database;
+
+    public static String hostAddress = "127.0.0.1";
 
     /**
      * Initializes and starts the application components including the logger, configuration,
@@ -78,7 +81,6 @@ public class Application {
      */
     private static void initializeLogger() {
         logger = new Logger(logFilePath);
-        logger.message("https://github.com/WMeindW \n\n\nDaniel Linda, cz.meind.PeerToPeerBank");
         logger.info(Application.class, "Starting application.");
     }
 
@@ -99,6 +101,7 @@ public class Application {
      *             to the configuration file. If provided, it overrides the default config file path.
      */
     private static void initializeConfig(String[] args) {
+        System.out.println("https://github.com/WMeindW \n\n\nDaniel Linda, cz.meind.PeerToPeerBank");
         if (args.length > 0 && args[0] != null) configFilePath = args[0];
         Properties properties = new Properties();
         File configFile = new File(configFilePath);
@@ -106,19 +109,20 @@ public class Application {
         try {
             properties.load(new FileInputStream(configFilePath));
         } catch (IOException e) {
-            Application.logger.error(Application.class, e);
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
         }
         try {
             dbUrl = properties.getProperty("database.url");
             dbUser = properties.getProperty("database.user");
             dbPassword = properties.getProperty("database.password");
             logFilePath = properties.getProperty("log.file.path");
+            hostAddress = properties.getProperty("server.host.address");
             port = Integer.parseInt(properties.getProperty("server.port"));
             poolSize = Integer.parseInt(properties.getProperty("server.thread.pool.size"));
-            Application.logger.info(Application.class, "Found config at " + configFilePath);
-            Application.logger.info(Application.class, properties.toString());
+            System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + "Found config at " + configFilePath);
+            System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + properties);
         } catch (Exception e) {
-            Application.logger.error(Application.class, e);
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
         }
     }
 }

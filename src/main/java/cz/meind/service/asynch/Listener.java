@@ -3,6 +3,7 @@ package cz.meind.service.asynch;
 import cz.meind.application.Application;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -30,11 +31,10 @@ public class Listener {
      */
     private static void start() {
         try {
-            server = new ServerSocket(Application.port);
-            Application.logger.info(Listener.class, "Socket server started on port " + Application.port + ".");
+            server = new ServerSocket(Application.port, 50, InetAddress.getByName(Application.hostAddress));
+            Application.logger.info(Listener.class, "Socket server started on port " + Application.port + " and address " + Application.hostAddress + ".");
         } catch (IOException e) {
             Application.logger.error(Listener.class, e);
-            throw new RuntimeException(e);
         }
     }
 
@@ -48,7 +48,7 @@ public class Listener {
         start();
         while (true) {
             Socket clientSocket = server.accept();
-            clientSocket.setSoTimeout(10000);
+            Application.server.handle(clientSocket);
             Application.logger.info(Listener.class, "Accepted client socket");
         }
     }
