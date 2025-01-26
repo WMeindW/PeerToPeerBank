@@ -1,10 +1,12 @@
 package cz.meind.service.asynch;
 
 import cz.meind.application.Application;
+import cz.meind.service.Parser;
 
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * This class represents a handler for incoming client connections.
@@ -48,7 +50,9 @@ public class Handler implements Runnable {
         try {
             while ((instruction = reader.readLine()) != null) {
                 if (!instruction.isEmpty()) {
-                    System.out.println(instruction);
+                    String[] args = Parser.parse(instruction);
+                    if (args[0].equalsIgnoreCase("exit")) throw new IOException("Client requested close");
+                    write(Application.server.getCommand(args[0]).execute(args));
                 }
             }
 
@@ -57,6 +61,11 @@ public class Handler implements Runnable {
         } finally {
             close();
         }
+    }
+
+    private void write(String message) {
+        PrintWriter writer = new PrintWriter(out, true);
+        writer.println(message);
     }
 
     /**

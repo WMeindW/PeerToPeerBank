@@ -16,6 +16,7 @@ public class Daemon {
      */
     public static void shutdown() {
         Application.logger.info(Daemon.class, "Shutting down");
+        Application.server.getServerThread().interrupt();
         Application.logger.info(Daemon.class, "Interrupted server");
         try {
             Thread.sleep(1000);
