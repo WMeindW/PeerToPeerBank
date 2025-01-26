@@ -27,7 +27,7 @@ public class Handler implements Runnable {
 
     private boolean closed;
 
-    private Thread currentThread;
+    private final Thread currentThread;
 
     /**
      * Constructs a new Handler with the given socket object.

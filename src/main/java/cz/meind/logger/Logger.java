@@ -49,6 +49,7 @@ public class Logger {
             Files.createDirectories(Path.of(logFile.getParent()));
             Files.createFile(Path.of(logFile.getPath()));
         }
+        write("https://github.com/WMeindW \n\n\nDaniel Linda, cz.meind.PeerToPeerBank");
     }
 
     /**
