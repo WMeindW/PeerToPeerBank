@@ -74,7 +74,7 @@ public class Handler implements Runnable {
                     } catch (IllegalArgumentException e) {
                         write(e.toString());
                     } catch (Exception e) {
-                        write("An error occurred processing request:" + e);
+                        write("An error occurred processing request");
                     }
                 }
             }
