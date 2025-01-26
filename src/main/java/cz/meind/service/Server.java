@@ -1,10 +1,7 @@
 package cz.meind.service;
 
 import cz.meind.application.Application;
-import cz.meind.command.BankCodeC;
-import cz.meind.command.Command;
-import cz.meind.command.ErrorC;
-import cz.meind.command.TestC;
+import cz.meind.command.*;
 import cz.meind.service.asynch.Handler;
 import cz.meind.service.asynch.Listener;
 
@@ -35,7 +32,7 @@ public class Server {
         try {
             Handler h = new Handler(clientSocket);
             executor.execute(h);
-            dispatched.put(h.getName(),h);
+            dispatched.put(h.getName(), h);
         } catch (IOException e) {
             Application.logger.error(Server.class, e);
         }
@@ -60,5 +57,6 @@ public class Server {
     private void populateCommands() {
         commands.put("T", new TestC());
         commands.put("BC", new BankCodeC());
+        commands.put("AC", new AccountCreateC());
     }
 }

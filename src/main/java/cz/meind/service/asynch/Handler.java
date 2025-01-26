@@ -74,13 +74,13 @@ public class Handler implements Runnable {
                     } catch (IllegalArgumentException e) {
                         write(e.toString());
                     } catch (Exception e) {
-                        write("An error occurred processing request");
+                        write("An error occurred processing request:" + e);
                     }
                 }
             }
 
         } catch (SocketException e) {
-            Application.logger.info(Handler.class, "Closing socket");
+            Application.logger.error(Handler.class, "Closing socket");
         } catch (IOException e) {
             Application.logger.error(Handler.class, e);
         } finally {
