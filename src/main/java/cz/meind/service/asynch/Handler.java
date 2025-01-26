@@ -71,10 +71,8 @@ public class Handler implements Runnable {
                     if (args[0].equalsIgnoreCase("exit")) throw new IOException("Client requested close");
                     try {
                         write(Application.server.getCommand(args[0]).execute(args));
-                    } catch (IllegalArgumentException e) {
-                        write(e.toString());
                     } catch (Exception e) {
-                        write("An error occurred processing request");
+                        write("ER Nastala neznámá chyba - zkontrolujte formát příkazu");
                     }
                 }
             }

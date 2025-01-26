@@ -55,7 +55,6 @@ public class Server {
     }
 
     private void populateCommands() {
-        commands.put("T", new TestC());
         commands.put("BC", new BankCodeC());
         commands.put("AC", new AccountCreateC());
     }

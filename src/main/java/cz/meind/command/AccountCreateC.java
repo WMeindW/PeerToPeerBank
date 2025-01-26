@@ -15,7 +15,7 @@ public class AccountCreateC implements Command {
         if (!al.isEmpty()) {
             Collections.sort(al);
             if (al.get(al.size() - 1).getAccountNumber() >= 99999)
-                return "Banka v tuto chvíli neumožňuje založení nového účtu";
+                return "ER Banka v tuto chvíli neumožňuje založení nového účtu";
             Account a = new Account(al.get(al.size() - 1).getAccountNumber() + 1);
             mapper.save(a);
             return args[0] + " " + a.getAccountNumber() + "/" + Application.hostAddress;
