@@ -2,12 +2,32 @@ package cz.meind.service.asynch;
 
 import cz.meind.application.Application;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class represents a daemon that continuously monitors the application.
  * It implements the Runnable interface to be executed in a separate thread.
  */
-public class Daemon {
-
+public class Daemon implements Runnable {
+    @Override
+    public void run() {
+        Application.logger.info(Daemon.class, "Monitoring started");
+        try {
+            while (true) {
+                Thread.sleep(1000);
+                for (Map.Entry<String, Handler> entry : Application.server.getHandlers().entrySet()) {
+                    Handler h = entry.getValue();
+                    h.incrementTimestamp();
+                    if (h.getTimestamp() > Application.kickTimeout) h.close();
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Application.logger.error(Daemon.class, e);
+            System.exit(110);
+        }
+    }
 
     /**
      * This method is used to gracefully shut down the daemon.

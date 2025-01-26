@@ -6,6 +6,7 @@ import cz.meind.service.Parser;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Arrays;
 
 /**
@@ -22,16 +23,24 @@ public class Handler implements Runnable {
 
     private final OutputStream out;
 
+    private int timestamp;
+
+    private boolean closed;
+
+    private Thread currentThread;
+
     /**
-     * Constructs a new Handler with the given id.
+     * Constructs a new Handler with the given socket object.
      *
-     * @param id The unique identifier for the handler.
+     * @param client Client socket object.
      */
-    public Handler(String id, Socket client) throws IOException {
-        this.name = id;
+    public Handler(Socket client) throws IOException {
+        currentThread = Thread.currentThread();
+        this.name = currentThread.getName();
         this.client = client;
         this.in = client.getInputStream();
         this.out = client.getOutputStream();
+        closed = false;
     }
 
     /**
@@ -43,27 +52,44 @@ public class Handler implements Runnable {
         return name;
     }
 
+    public void incrementTimestamp() {
+        timestamp++;
+    }
+
+    public int getTimestamp() {
+        return timestamp;
+    }
 
     public void run() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String instruction;
         try {
-            while ((instruction = reader.readLine()) != null) {
+            while (!closed && (instruction = reader.readLine()) != null) {
+                timestamp = 0;
                 if (!instruction.isEmpty()) {
                     String[] args = Parser.parse(instruction);
                     if (args[0].equalsIgnoreCase("exit")) throw new IOException("Client requested close");
-                    write(Application.server.getCommand(args[0]).execute(args));
+                    try {
+                        write(Application.server.getCommand(args[0]).execute(args));
+                    } catch (IllegalArgumentException e) {
+                        write(e.toString());
+                    } catch (Exception e) {
+                        write("An error occurred processing request");
+                    }
                 }
             }
 
+        } catch (SocketException e) {
+            Application.logger.info(Handler.class, "Closing socket");
         } catch (IOException e) {
             Application.logger.error(Handler.class, e);
         } finally {
-            close();
+            if (!closed) close();
         }
     }
 
     private void write(String message) {
+        if (closed) return;
         PrintWriter writer = new PrintWriter(out, true);
         writer.println(message);
     }
@@ -71,7 +97,8 @@ public class Handler implements Runnable {
     /**
      * Closes the client connection and releases the handler.
      */
-    private void close() {
+    public void close() {
+        closed = true;
         try {
             in.close();
             out.close();
@@ -80,8 +107,8 @@ public class Handler implements Runnable {
             Application.logger.error(Handler.class, e);
         }
         client = null;
-        Thread.currentThread().interrupt();
+        Application.server.releaseHandler(this.name);
         Application.logger.info(Handler.class, "Client disconnected");
+        currentThread.interrupt();
     }
-
 }

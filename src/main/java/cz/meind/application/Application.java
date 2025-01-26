@@ -38,6 +38,8 @@ public class Application {
 
     public static String hostAddress = "127.0.0.1";
 
+    public static int kickTimeout = 15;
+
     /**
      * Initializes and starts the application components including the logger, configuration,
      * daemon thread, and server.
@@ -62,6 +64,9 @@ public class Application {
     private static void initializeDaemon() {
         Runtime.getRuntime().addShutdownHook(new Thread(Daemon::shutdown));
         Application.logger.info(Daemon.class, "Starting daemon.");
+        Thread t = new Thread(new Daemon());
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
@@ -112,6 +117,7 @@ public class Application {
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
         }
         try {
+            kickTimeout = Integer.parseInt(properties.getProperty("server.client.timeout"));
             dbUrl = properties.getProperty("database.url");
             dbUser = properties.getProperty("database.user");
             dbPassword = properties.getProperty("database.password");

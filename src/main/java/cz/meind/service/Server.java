@@ -1,9 +1,10 @@
 package cz.meind.service;
 
 import cz.meind.application.Application;
+import cz.meind.command.BankCodeC;
 import cz.meind.command.Command;
-import cz.meind.command.ErrorCommand;
-import cz.meind.command.TestCommand;
+import cz.meind.command.ErrorC;
+import cz.meind.command.TestC;
 import cz.meind.service.asynch.Handler;
 import cz.meind.service.asynch.Listener;
 
@@ -20,6 +21,8 @@ public class Server {
 
     private final HashMap<String, Command> commands = new HashMap<>();
 
+    private final HashMap<String, Handler> dispatched = new HashMap<>();
+
     public Server() {
         populateCommands();
         executor = Executors.newFixedThreadPool(Application.poolSize);
@@ -30,10 +33,20 @@ public class Server {
 
     public void handle(Socket clientSocket) {
         try {
-            executor.execute(new Handler(Thread.currentThread().getName(), clientSocket));
+            Handler h = new Handler(clientSocket);
+            executor.execute(h);
+            dispatched.put(h.getName(),h);
         } catch (IOException e) {
             Application.logger.error(Server.class, e);
         }
+    }
+
+    public HashMap<String, Handler> getHandlers() {
+        return dispatched;
+    }
+
+    public void releaseHandler(String name) {
+        dispatched.remove(name);
     }
 
     public Thread getServerThread() {
@@ -41,14 +54,11 @@ public class Server {
     }
 
     public Command getCommand(String command) {
-        return commands.getOrDefault(command, new ErrorCommand());
+        return commands.getOrDefault(command, new ErrorC());
     }
 
     private void populateCommands() {
-        commands.put("T", new TestCommand());
-    }
-
-    public void stop() {
-        serverThread.interrupt();
+        commands.put("T", new TestC());
+        commands.put("BC", new BankCodeC());
     }
 }
