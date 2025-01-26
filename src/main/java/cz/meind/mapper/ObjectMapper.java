@@ -96,6 +96,7 @@ public class ObjectMapper {
             return null;
         }
         ResultSet rs = sqlService.fetchById(metadata, idColumn.getAnnotation(Column.class).name(), id);
+        if (rs == null) return null;
         try {
             T entity = clazz.getDeclaredConstructor().newInstance();
             if (rs.next()) {
