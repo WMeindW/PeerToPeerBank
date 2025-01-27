@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 
 public class Client {
     private static boolean testAlive(String ip, int port, int timeout) {
@@ -50,6 +51,8 @@ public class Client {
             socket.setSoTimeout(2000);
             write(command, new PrintWriter(socket.getOutputStream(), true));
             return read(new BufferedReader(new InputStreamReader(socket.getInputStream())));
+        }catch (SocketTimeoutException e) {
+            return "ER Odpověď banky trvala příliš dlouho";
         } catch (IOException e) {
             Application.logger.error(Client.class, e);
             return "ER Nastala chyba při připojování k bance";
