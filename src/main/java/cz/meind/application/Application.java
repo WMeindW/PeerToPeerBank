@@ -40,6 +40,10 @@ public class Application {
 
     public static int kickTimeout = 15;
 
+    public static int scanTimeout = 100;
+
+    public static int scanThreadCount = 5;
+
     /**
      * Initializes and starts the application components including the logger, configuration,
      * daemon thread, and server.
@@ -117,6 +121,8 @@ public class Application {
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
         }
         try {
+            scanThreadCount = Integer.parseInt(properties.getProperty("server.client.scan.threads"));
+            scanTimeout = Integer.parseInt(properties.getProperty("server.client.scan.timeout"));
             kickTimeout = Integer.parseInt(properties.getProperty("server.client.timeout"));
             dbUrl = properties.getProperty("database.url");
             dbUser = properties.getProperty("database.user");

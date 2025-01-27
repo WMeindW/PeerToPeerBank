@@ -1,6 +1,7 @@
 package cz.meind.command;
 
 import cz.meind.application.Application;
+import cz.meind.client.Client;
 import cz.meind.database.entities.Account;
 
 import java.math.BigDecimal;
@@ -22,7 +23,10 @@ public class AccountRemoveC implements Command {
         }
         Optional<Account> a = mapper.fetchAll(Account.class).stream().filter(acc -> acc.getAccountNumber() == accountNumber).findFirst();
         if (a.isEmpty()) return "ER Účet s tímto číslem neexistuje";
-        if (!bankCode.equals(Application.hostAddress)) return "ER Špatná banka";
+        if (!bankCode.equals(Application.hostAddress)) {
+            if (Client.scanHost(bankCode)) return "AD " + bankCode;
+            return "ER Neznámá banka";
+        }
         Account account = a.get();
         if (account.getBalance().compareTo(new BigDecimal(0)) > 0)
             return "ER Nelze smazat bankovní účet na kterém jsou finance";

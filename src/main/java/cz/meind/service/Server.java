@@ -38,6 +38,10 @@ public class Server {
         }
     }
 
+    public void shutdownExecutor() {
+        executor.shutdown();
+    }
+
     public HashMap<String, Handler> getHandlers() {
         return dispatched;
     }

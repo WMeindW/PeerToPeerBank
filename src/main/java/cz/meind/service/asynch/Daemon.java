@@ -23,7 +23,6 @@ public class Daemon implements Runnable {
                 }
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
             Application.logger.error(Daemon.class, e);
             System.exit(110);
         }
@@ -36,6 +35,7 @@ public class Daemon implements Runnable {
      */
     public static void shutdown() {
         Application.logger.info(Daemon.class, "Shutting down");
+        Application.server.shutdownExecutor();
         Application.server.getServerThread().interrupt();
         Application.logger.info(Daemon.class, "Interrupted server");
         try {
