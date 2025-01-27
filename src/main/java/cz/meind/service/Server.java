@@ -57,5 +57,6 @@ public class Server {
     private void populateCommands() {
         commands.put("BC", new BankCodeC());
         commands.put("AC", new AccountCreateC());
+        commands.put("AD", new AccountDepositC());
     }
 }

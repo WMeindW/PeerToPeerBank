@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 
 /**
@@ -29,28 +30,27 @@ public class Listener {
      * Logs a message indicating the successful start.
      * Throws a RuntimeException if an I/O error occurs.
      */
-    private static void start() {
-        try {
-            server = new ServerSocket(Application.port, 50, InetAddress.getByName(Application.hostAddress));
-            Application.logger.info(Listener.class, "Socket server started on port " + Application.port + " and address " + Application.hostAddress + ".");
-        } catch (IOException e) {
-            Application.logger.error(Listener.class, e);
-        }
+    private static void start() throws IOException {
+        server = new ServerSocket(Application.port, 50, InetAddress.getByName(Application.hostAddress));
+        Application.logger.info(Listener.class, "Socket server started on port " + Application.port + " and address " + Application.hostAddress + ".");
     }
 
     /**
      * Runs the server socket listener.
      * Accepts incoming client connections and delegates handling to the server's handler.
-     *
-     * @throws IOException if an I/O error occurs
      */
-    private static void run() throws IOException {
-        start();
-        while (true) {
-            Socket clientSocket = server.accept();
-            Application.server.handle(clientSocket);
-            Application.logger.info(Listener.class, "Accepted client socket");
+    private static void run() {
+        try {
+            start();
+            while (true) {
+                Socket clientSocket = server.accept();
+                Application.server.handle(clientSocket);
+                Application.logger.info(Listener.class, "Accepted client socket");
+            }
+        } catch (IOException e) {
+            Application.logger.error(Listener.class, "Fatal server error: " + e);
         }
+
     }
 
     /**
@@ -62,8 +62,6 @@ public class Listener {
         try {
             Thread.sleep(1000);
             run();
-        } catch (IOException e) {
-            Application.logger.error(Listener.class, e);
         } catch (InterruptedException e) {
             Application.logger.error(Listener.class, e);
             System.exit(130);
