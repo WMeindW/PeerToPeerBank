@@ -28,7 +28,7 @@ public class Client {
     private int scanHost(String hostIp) {
         for (int i = 65525; i <= 65535; i++) {
             if (testAlive(hostIp, i, Application.scanTimeout)) {
-                Application.logger.info(Client.class, "Found bank at: " + i);
+                Application.logger.info(Client.class, "Found bank at: " + hostIp + "/" + i);
                 return i;
             }
         }
@@ -49,6 +49,7 @@ public class Client {
         String subnet = Application.hostAddress.substring(0, Application.hostAddress.length() - Integer.toString(interfaceID).length());
         ExecutorService executor = Executors.newFixedThreadPool(Application.scanThreadCount);
         AtomicInteger scanned = new AtomicInteger();
+        AtomicInteger found = new AtomicInteger();
         Collection<Callable<String>> tasks = new LinkedList<>();
         for (int i = 1; i <= 254; i++) {
             if (i == interfaceID) continue;
@@ -58,13 +59,14 @@ public class Client {
                     scanned.getAndIncrement();
                     int port = scanHost(subnet + finalI);
                     banks.put(subnet + finalI, port);
+                    found.getAndIncrement();
                 } catch (RuntimeException ignore) {
                 }
                 return null;
             });
         }
         executor.invokeAll(tasks);
-        Application.logger.info(Client.class, "Scanned " + scanned + " ips");
+        Application.logger.info(Client.class, "Scanned " + scanned + " ips and found " + found + " banks");
         return new HashMap<>(banks);
     }
 
