@@ -14,12 +14,12 @@ public class AccountWithdrawC implements Command {
     public String execute(String[] args) {
         if (args.length != 3) return "ER Špatný počet argumentů";
         int accountNumber;
-        BigDecimal balanceToSubtract;
+        Long balanceToSubtract;
         String bankCode;
         try {
             accountNumber = Integer.parseInt(args[1].split("/")[0]);
             bankCode = args[1].split("/")[1];
-            balanceToSubtract = new BigDecimal(args[2]);
+            balanceToSubtract = Long.valueOf(args[2]);
         } catch (Exception e) {
             return "ER Špatný formát argumentů";
         }
@@ -31,7 +31,7 @@ public class AccountWithdrawC implements Command {
 
         Account account = a.get();
         if (balanceToSubtract.compareTo(account.getBalance()) > 0) return "ER Nedostatek finančních prostředků";
-        account.setBalance(account.getBalance().subtract(balanceToSubtract));
+        account.setBalance(account.getBalance() - balanceToSubtract);
         try {
             mapper.update(account);
         } catch (IllegalAccessException e) {

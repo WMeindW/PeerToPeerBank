@@ -17,7 +17,7 @@ public class Account implements Comparable<Account> {
     private Integer accountNumber;
 
     @Column(name = "balance")
-    private BigDecimal balance;
+    private Long balance;
 
     public int getId() {
         return id;
@@ -35,17 +35,17 @@ public class Account implements Comparable<Account> {
         this.accountNumber = accountNumber;
     }
 
-    public BigDecimal getBalance() {
+    public Long getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(Long balance) {
         this.balance = balance;
     }
 
     public Account(Integer accountNumber) {
         this.accountNumber = accountNumber;
-        this.balance = BigDecimal.ZERO;
+        this.balance = 0L;
     }
 
     public Account() {

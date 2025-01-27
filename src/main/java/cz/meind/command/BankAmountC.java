@@ -9,9 +9,9 @@ import static cz.meind.application.Application.mapper;
 public class BankAmountC implements Command {
     @Override
     public String execute(String[] args) {
-        BigDecimal total = new BigDecimal(0);
+        Long total = 0L;
         for (Account account : mapper.fetchAll(Account.class))
-            total = total.add(account.getBalance());
+            total += account.getBalance();
         return "BA " + total;
     }
 }

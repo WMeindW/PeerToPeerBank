@@ -26,7 +26,7 @@ public class AccountRemoveC implements Command {
         if (!bankCode.equals(Application.hostAddress))
             return "ER Neznámá banka";
         Account account = a.get();
-        if (account.getBalance().compareTo(new BigDecimal(0)) > 0)
+        if (account.getBalance().compareTo(0L) > 0)
             return "ER Nelze smazat bankovní účet na kterém jsou finance";
         mapper.deleteById(Account.class, account.getId());
         return "AR";
