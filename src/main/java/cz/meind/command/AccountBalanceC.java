@@ -1,6 +1,7 @@
 package cz.meind.command;
 
 import cz.meind.application.Application;
+import cz.meind.client.Client;
 import cz.meind.database.entities.Account;
 
 import java.util.Optional;
@@ -22,7 +23,8 @@ public class AccountBalanceC implements Command {
 
         Optional<Account> a = mapper.fetchAll(Account.class).stream().filter(acc -> acc.getAccountNumber() == accountNumber).findFirst();
         if (a.isEmpty()) return "ER Účet s tímto číslem neexistuje";
-        if (!bankCode.equals(Application.hostAddress)) return "ER Špatná banka";
+        if (!bankCode.equals(Application.hostAddress))
+            return Client.execute(bankCode, args[0] + " " + args[1]);
         return "AB " + a.get().getBalance();
     }
 }

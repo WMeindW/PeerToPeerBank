@@ -47,8 +47,8 @@ public class Client {
         }
         try (Socket socket = new Socket()) {
             SocketAddress socketAddress = new InetSocketAddress(ip, port);
-            socket.connect(socketAddress, Application.scanTimeout);
-            socket.setSoTimeout(2000);
+            socket.connect(socketAddress, Application.connectTimeout);
+            socket.setSoTimeout(Application.readTimeout);
             write(command, new PrintWriter(socket.getOutputStream(), true));
             return read(new BufferedReader(new InputStreamReader(socket.getInputStream())));
         }catch (SocketTimeoutException e) {

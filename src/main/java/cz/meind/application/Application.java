@@ -42,6 +42,10 @@ public class Application {
 
     public static int scanTimeout = 100;
 
+    public static int connectTimeout = 2500;
+
+    public static int readTimeout = 2500;
+
     public static int scanThreadCount = 5;
 
     /**
@@ -121,6 +125,8 @@ public class Application {
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
         }
         try {
+            readTimeout = Integer.parseInt(properties.getProperty("server.client.read.timeout"));
+            connectTimeout = Integer.parseInt(properties.getProperty("server.client.connect.timeout"));
             scanThreadCount = Integer.parseInt(properties.getProperty("server.client.scan.threads"));
             scanTimeout = Integer.parseInt(properties.getProperty("server.client.scan.timeout"));
             kickTimeout = Integer.parseInt(properties.getProperty("server.client.timeout"));
