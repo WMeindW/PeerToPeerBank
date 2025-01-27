@@ -67,6 +67,6 @@ public class Server {
         commands.put("AR", new AccountRemoveC());
         commands.put("BA", new BankAmountC());
         commands.put("BN", new BankNumberClientsC());
-
+        commands.put("RP", new RobberyPlanC());
     }
 }

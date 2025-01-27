@@ -7,6 +7,10 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Client {
     private static boolean testAlive(String ip, int port, int timeout) {
@@ -38,6 +42,33 @@ public class Client {
         return reader.readLine();
     }
 
+    public static HashMap<String, Integer> scanNetwork() {
+        int interfaceID = Integer.parseInt(Application.hostAddress.split("\\.")[3]);
+        String subnet = Application.hostAddress.substring(0, Application.hostAddress.length() - Integer.toString(interfaceID).length());
+        ExecutorService executor = Executors.newFixedThreadPool(Application.scanThreadCount);
+        HashMap<String, Integer> banks = new HashMap<>();
+        for (int i = 1; i <= 254; i++) {
+            if (i == interfaceID) continue;
+            int finalI = i;
+            executor.submit(() -> {
+                try {
+                    System.out.println(finalI);
+                    int port = scanHost(subnet + finalI);
+                    banks.put(subnet + finalI, port);
+                } catch (RuntimeException ignore) {
+                }
+            });
+        }
+        try {
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Application.logger.error(Client.class, e);
+        }
+        executor.shutdownNow();
+        System.out.println("Scan finished");
+        return banks;
+    }
+
     public static String execute(String ip, String command) {
         int port;
         try {
@@ -51,7 +82,7 @@ public class Client {
             socket.setSoTimeout(Application.readTimeout);
             write(command, new PrintWriter(socket.getOutputStream(), true));
             return read(new BufferedReader(new InputStreamReader(socket.getInputStream())));
-        }catch (SocketTimeoutException e) {
+        } catch (SocketTimeoutException e) {
             return "ER Odpověď banky trvala příliš dlouho";
         } catch (IOException e) {
             Application.logger.error(Client.class, e);
