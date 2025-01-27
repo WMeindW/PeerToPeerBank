@@ -26,10 +26,9 @@ public class AccountWithdrawC implements Command {
 
         Optional<Account> a = mapper.fetchAll(Account.class).stream().filter(acc -> acc.getAccountNumber() == accountNumber).findFirst();
         if (a.isEmpty()) return "ER Účet s tímto číslem neexistuje";
-        if (!bankCode.equals(Application.hostAddress)) {
-            if (Client.scanHost(bankCode)) return "AD " + bankCode;
-            return "ER Neznámá banka";
-        }
+        if (!bankCode.equals(Application.hostAddress))
+            return Client.execute(bankCode, args[0] + " " + args[1] + " " + args[2]);
+
         Account account = a.get();
         if (balanceToSubtract.compareTo(account.getBalance()) > 0) return "ER Nedostatek finančních prostředků";
         account.setBalance(account.getBalance().subtract(balanceToSubtract));
