@@ -22,7 +22,7 @@ public class Client {
     private static int scanHost(String hostIp) {
         for (int i = 65525; i <= 65535; i++) {
             if (testAlive(hostIp, i, Application.scanTimeout)) {
-                System.out.println("Found host at: " + i);
+                Application.logger.info(Client.class, "Found bank at: " + i);
                 return i;
             }
         }
