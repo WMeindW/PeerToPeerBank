@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client {
     private static boolean testAlive(String ip, int port, int timeout) {
@@ -47,12 +48,13 @@ public class Client {
         String subnet = Application.hostAddress.substring(0, Application.hostAddress.length() - Integer.toString(interfaceID).length());
         ExecutorService executor = Executors.newFixedThreadPool(Application.scanThreadCount);
         HashMap<String, Integer> banks = new HashMap<>();
+        AtomicInteger scanned = new AtomicInteger();
         for (int i = 1; i <= 254; i++) {
             if (i == interfaceID) continue;
             int finalI = i;
             executor.submit(() -> {
                 try {
-                    System.out.println(finalI);
+                    scanned.getAndIncrement();
                     int port = scanHost(subnet + finalI);
                     banks.put(subnet + finalI, port);
                 } catch (RuntimeException ignore) {
@@ -65,7 +67,7 @@ public class Client {
             Application.logger.error(Client.class, e);
         }
         executor.shutdownNow();
-        System.out.println("Scan finished");
+        Application.logger.info(Client.class, "Scanned " + scanned + " ips");
         return banks;
     }
 
