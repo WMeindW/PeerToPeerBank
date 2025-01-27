@@ -1,5 +1,6 @@
 package cz.meind.application;
 
+import cz.meind.client.Client;
 import cz.meind.database.DatabaseContext;
 import cz.meind.logger.Logger;
 import cz.meind.mapper.ObjectMapper;
@@ -48,6 +49,8 @@ public class Application {
 
     public static int scanThreadCount = 5;
 
+    public static Client client;
+
     /**
      * Initializes and starts the application components including the logger, configuration,
      * daemon thread, and server.
@@ -83,6 +86,7 @@ public class Application {
      * and creates a new instance of the Server class.
      */
     private static void initializeServer() {
+        client = new Client();
         Application.logger.info(Server.class, "Starting server.");
         server = new Server();
     }

@@ -1,20 +1,20 @@
 package cz.meind.client;
 
 import cz.meind.application.Application;
+import cz.meind.service.Parser;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
-import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.sql.SQLOutput;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client {
-    private static boolean testAlive(String ip, int port, int timeout) {
+    private boolean testAlive(String ip, int port, int timeout) {
         try (Socket socket = new Socket()) {
             SocketAddress socketAddress = new InetSocketAddress(ip, port);
             socket.connect(socketAddress, timeout);
@@ -25,7 +25,7 @@ public class Client {
         }
     }
 
-    private static int scanHost(String hostIp) {
+    private int scanHost(String hostIp) {
         for (int i = 65525; i <= 65535; i++) {
             if (testAlive(hostIp, i, Application.scanTimeout)) {
                 Application.logger.info(Client.class, "Found bank at: " + i);
@@ -35,49 +35,71 @@ public class Client {
         throw new RuntimeException();
     }
 
-    private static void write(String command, PrintWriter writer) {
+    private void write(String command, PrintWriter writer) {
         writer.println(command);
     }
 
-    private static String read(BufferedReader reader) throws IOException {
+    private String read(BufferedReader reader) throws IOException {
         return reader.readLine();
     }
 
-    public static HashMap<String, Integer> scanNetwork() {
+    private HashMap<String, Integer> scanNetwork() throws InterruptedException {
+        ConcurrentHashMap<String, Integer> banks = new ConcurrentHashMap<>();
         int interfaceID = Integer.parseInt(Application.hostAddress.split("\\.")[3]);
         String subnet = Application.hostAddress.substring(0, Application.hostAddress.length() - Integer.toString(interfaceID).length());
         ExecutorService executor = Executors.newFixedThreadPool(Application.scanThreadCount);
-        HashMap<String, Integer> banks = new HashMap<>();
         AtomicInteger scanned = new AtomicInteger();
+        Collection<Callable<String>> tasks = new LinkedList<>();
         for (int i = 1; i <= 254; i++) {
             if (i == interfaceID) continue;
             int finalI = i;
-            executor.submit(() -> {
+            tasks.add(() -> {
                 try {
                     scanned.getAndIncrement();
                     int port = scanHost(subnet + finalI);
                     banks.put(subnet + finalI, port);
                 } catch (RuntimeException ignore) {
                 }
+                return null;
             });
         }
-        try {
-            executor.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Application.logger.error(Client.class, e);
-        }
-        executor.shutdownNow();
+        executor.invokeAll(tasks);
         Application.logger.info(Client.class, "Scanned " + scanned + " ips");
-        return banks;
+        return new HashMap<>(banks);
     }
 
-    public static String execute(String ip, String command) {
+    public HashMap<Long, Integer> analyzeBanks() throws InterruptedException {
+        long start = System.currentTimeMillis();
+        ConcurrentHashMap<Long, Integer> analyzedBanks = new ConcurrentHashMap<>();
+        ExecutorService executor = Executors.newFixedThreadPool(Application.scanThreadCount);
+        Collection<Callable<String>> tasks = new LinkedList<>();
+        for (Map.Entry<String, Integer> entry : scanNetwork().entrySet()) {
+            tasks.add(() -> {
+                try {
+                    Long total = Long.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA"))[1]);
+                    Integer number = Integer.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BN"))[1]);
+                    analyzedBanks.put(total, number);
+                } catch (Exception e) {
+                }
+                return null;
+            });
+        }
+        executor.invokeAll(tasks);
+        Application.logger.info(Client.class, "Task took: " + (System.currentTimeMillis() - start));
+        return new HashMap<>(analyzedBanks);
+    }
+
+    public String command(String ip, String command) {
         int port;
         try {
             port = scanHost(ip);
         } catch (RuntimeException e) {
             return "ER Banka nenalezena";
         }
+        return execute(ip, port, command);
+    }
+
+    private String execute(String ip, int port, String command) {
         try (Socket socket = new Socket()) {
             SocketAddress socketAddress = new InetSocketAddress(ip, port);
             socket.connect(socketAddress, Application.connectTimeout);
