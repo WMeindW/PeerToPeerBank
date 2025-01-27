@@ -58,5 +58,9 @@ public class Server {
         commands.put("BC", new BankCodeC());
         commands.put("AC", new AccountCreateC());
         commands.put("AD", new AccountDepositC());
+        commands.put("AW", new AccountWithdrawC());
+        commands.put("AB", new AccountBalanceC());
+        commands.put("AR", new AccountRemoveC());
+
     }
 }
