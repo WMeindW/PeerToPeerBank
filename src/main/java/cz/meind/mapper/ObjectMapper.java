@@ -35,7 +35,7 @@ public class ObjectMapper {
         }
     }
 
-    public void update(Object entity) throws IllegalAccessException, SQLException {
+    public void update(Object entity) throws IllegalAccessException {
         Class<?> clazz = entity.getClass();
         EntityMetadata metadata = Application.database.entities.get(clazz);
         Field idField = getIdField(clazz);

@@ -1,9 +1,9 @@
 package cz.meind.command;
 
+import cz.meind.application.Application;
 import cz.meind.database.entities.Account;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static cz.meind.application.Application.mapper;
@@ -25,6 +25,14 @@ public class AccountDepositC implements Command {
 
         Optional<Account> a = mapper.fetchAll(Account.class).stream().filter(acc -> acc.getAccountNumber() == accountNumber).findFirst();
         if (a.isEmpty()) return "ER Účet s tímto číslem neexistuje";
-        return accountNumber + " " + bankCode + " " + balanceToAdd;
+        if (!bankCode.equals(Application.hostAddress)) return "ER Špatná banka";
+        Account account = a.get();
+        account.setBalance(account.getBalance().add(balanceToAdd));
+        try {
+            mapper.update(account);
+        } catch (IllegalAccessException e) {
+            return "ER Nastala chyba při ukládání dat";
+        }
+        return "AD";
     }
 }
