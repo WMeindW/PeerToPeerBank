@@ -4,6 +4,7 @@ import cz.meind.application.Application;
 import cz.meind.service.Parser;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -71,15 +72,15 @@ public class Client {
         return new HashMap<>(banks);
     }
 
-    public HashMap<Long, Integer> analyzeBanks() throws InterruptedException {
+    public HashMap<BigInteger, Integer> analyzeBanks() throws InterruptedException {
         long start = System.currentTimeMillis();
-        ConcurrentHashMap<Long, Integer> analyzedBanks = new ConcurrentHashMap<>();
+        ConcurrentHashMap<BigInteger, Integer> analyzedBanks = new ConcurrentHashMap<>();
         ExecutorService executor = Executors.newFixedThreadPool(Application.scanThreadCount);
         Collection<Callable<String>> tasks = new LinkedList<>();
         for (Map.Entry<String, Integer> entry : scanNetwork().entrySet()) {
             tasks.add(() -> {
                 try {
-                    Long total = Long.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA"))[1]);
+                    BigInteger total = new BigInteger(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA"))[1]);
                     Integer number = Integer.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BN"))[1]);
                     analyzedBanks.put(total, number);
                 } catch (Exception e) {
