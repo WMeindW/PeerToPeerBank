@@ -66,6 +66,7 @@ public class Client {
             });
         }
         executor.invokeAll(tasks);
+        executor.shutdownNow();
         Application.logger.info(Client.class, "Scanned " + scanned + " ips and found " + found + " banks");
         return new HashMap<>(banks);
     }
@@ -87,7 +88,8 @@ public class Client {
             });
         }
         executor.invokeAll(tasks);
-        Application.logger.info(Client.class, "Task took: " + (System.currentTimeMillis() - start));
+        executor.shutdownNow();
+        Application.logger.info(Client.class, "Task took: " + (System.currentTimeMillis() - start) + " ms");
         return new HashMap<>(analyzedBanks);
     }
 

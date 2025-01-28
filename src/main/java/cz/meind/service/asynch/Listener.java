@@ -32,7 +32,7 @@ public class Listener {
      */
     private static void start() throws IOException {
         server = new ServerSocket(Application.port, 50, InetAddress.getByName(Application.hostAddress));
-        Application.logger.info(Listener.class, "Socket server started on port " + Application.port + " and address " + Application.hostAddress + ".");
+        Application.logger.info(Listener.class, "Socket server started on port " + Application.port + " and address " + Application.hostAddress);
     }
 
     /**
