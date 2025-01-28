@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
+import java.util.concurrent.*;
 
 /**
  * This class represents a handler for incoming client connections.
@@ -69,11 +70,7 @@ public class Handler implements Runnable {
                 if (!instruction.isEmpty()) {
                     String[] args = Parser.parse(instruction);
                     if (args[0].equalsIgnoreCase("exit")) throw new IOException("Client requested close");
-                    try {
-                        write(Application.server.getCommand(args[0]).execute(args));
-                    } catch (Exception e) {
-                        write("ER Nastala neznámá chyba - zkontrolujte formát příkazu");
-                    }
+                    write(executeWithTimeout(() -> Application.server.getCommand(args[0]).execute(args), Application.taskTimeout));
                 }
             }
 
@@ -88,8 +85,31 @@ public class Handler implements Runnable {
 
     private void write(String message) {
         if (closed) return;
-        PrintWriter writer = new PrintWriter(out, true);
-        writer.println(message);
+        try {
+            PrintWriter writer = new PrintWriter(out, true);
+            writer.println(message);
+        } catch (Exception e) {
+            Application.logger.error(Handler.class,"Could not write " + message + " to client socket");
+        }
+
+    }
+
+    private String executeWithTimeout(Callable<String> task, int timeoutInMilliseconds) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<String> future = executor.submit(task);
+
+        try {
+            return future.get(timeoutInMilliseconds, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            return "ER Úkol trval příliš dlouho";
+        } catch (Exception e) {
+            Application.logger.error(Handler.class, e);
+            return "ER Nastala neznámá chyba - zkontrolujte formát příkazu";
+        } finally {
+            Application.logger.info(Handler.class, "Task finished");
+            future.cancel(true); // Cancel the task if still running
+            executor.shutdownNow(); // Shut down the executor
+        }
     }
 
     /**
