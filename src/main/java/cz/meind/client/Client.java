@@ -72,9 +72,9 @@ public class Client {
         return new HashMap<>(banks);
     }
 
-    public HashMap<BigInteger, Integer> analyzeBanks() throws InterruptedException {
+    public LinkedList<Bank> analyzeBanks() throws InterruptedException {
         long start = System.currentTimeMillis();
-        ConcurrentHashMap<BigInteger, Integer> analyzedBanks = new ConcurrentHashMap<>();
+        LinkedList<Bank> analyzedBanks = new LinkedList<>();
         ExecutorService executor = Executors.newFixedThreadPool(Application.scanThreadCount);
         Collection<Callable<String>> tasks = new LinkedList<>();
         for (Map.Entry<String, Integer> entry : scanNetwork().entrySet()) {
@@ -82,8 +82,8 @@ public class Client {
                 try {
                     BigInteger total = new BigInteger(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA"))[1]);
                     Integer number = Integer.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BN"))[1]);
-                    analyzedBanks.put(total, number);
-                } catch (Exception e) {
+                    analyzedBanks.add(new Bank(entry.getKey(), total, number));
+                } catch (Exception ignored) {
                 }
                 return null;
             });
@@ -91,7 +91,7 @@ public class Client {
         executor.invokeAll(tasks);
         executor.shutdownNow();
         Application.logger.info(Client.class, "Task took: " + (System.currentTimeMillis() - start) + " ms");
-        return new HashMap<>(analyzedBanks);
+        return analyzedBanks;
     }
 
     public String command(String ip, String command) {
