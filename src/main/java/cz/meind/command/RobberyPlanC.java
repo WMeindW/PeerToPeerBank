@@ -33,7 +33,6 @@ public class RobberyPlanC implements Command {
         for (Bank b : banks) {
             if (b.getTotal().compareTo(remaining) > 0) continue;
             robbing.add(b);
-            System.out.println(b.getTotal());
             remaining = remaining.subtract(b.getTotal());
             totalClients += b.getNumberOfClients();
         }
