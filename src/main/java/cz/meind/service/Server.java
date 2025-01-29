@@ -39,7 +39,7 @@ public class Server {
     }
 
     public void shutdownExecutor() {
-        executor.shutdown();
+        executor.shutdownNow();
     }
 
     public HashMap<String, Handler> getHandlers() {
