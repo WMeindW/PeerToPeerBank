@@ -26,10 +26,14 @@ public class RobberyPlanC implements Command {
         banks.add(new Bank("5", new BigInteger("34984413275"), 16));
         banks.add(new Bank("6", new BigInteger("278"), 10));
         banks.add(new Bank("7", new BigInteger("500000"), 10));
+        if (banks.size() <= 0) {
+            return "ER Není dostupná žádná banka";
+        }
         Collections.sort(banks);
         for (Bank b : banks) {
             if (b.getTotal().compareTo(remaining) > 0) continue;
             robbing.add(b);
+            System.out.println(b.getTotal());
             remaining = remaining.subtract(b.getTotal());
             totalClients += b.getNumberOfClients();
         }

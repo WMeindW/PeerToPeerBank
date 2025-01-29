@@ -34,6 +34,6 @@ public class Bank implements Comparable<Bank> {
 
     @Override
     public int compareTo(Bank o) {
-        return this.coefficient.compareTo(o.getCoefficient());
+        return o.getCoefficient().compareTo(this.coefficient);
     }
 }
