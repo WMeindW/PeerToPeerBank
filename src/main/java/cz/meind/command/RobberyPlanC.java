@@ -1,5 +1,6 @@
 package cz.meind.command;
 
+import cz.meind.application.Application;
 import cz.meind.client.Bank;
 
 import java.math.BigInteger;
@@ -17,16 +18,14 @@ public class RobberyPlanC implements Command {
         }
         int totalClients = 0;
         BigInteger remaining = new BigInteger(totalToSteal.toString());
-        LinkedList<Bank> banks = new LinkedList<>();
+        LinkedList<Bank> banks;
+        try {
+            banks = Application.client.analyzeBanks();
+        } catch (InterruptedException e) {
+            return "ER Vypršel čas na analýzu bank";
+        }
         LinkedList<Bank> robbing = new LinkedList<>();
-        banks.add(new Bank("1", new BigInteger("500000"), 10));
-        banks.add(new Bank("2", new BigInteger("5000000"), 15));
-        banks.add(new Bank("3", new BigInteger("835956"), 10));
-        banks.add(new Bank("4", new BigInteger("23683333"), 4));
-        banks.add(new Bank("5", new BigInteger("34984413275"), 16));
-        banks.add(new Bank("6", new BigInteger("278"), 10));
-        banks.add(new Bank("7", new BigInteger("500000"), 10));
-        if (banks.size() <= 0) {
+        if (banks.isEmpty()) {
             return "ER Není dostupná žádná banka";
         }
         Collections.sort(banks);
