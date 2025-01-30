@@ -19,6 +19,7 @@ public class Client {
         try (Socket socket = new Socket()) {
             SocketAddress socketAddress = new InetSocketAddress(ip, port);
             socket.connect(socketAddress, timeout);
+            System.out.println(socketAddress);
             socket.close();
             return true;
         } catch (IOException e) {
