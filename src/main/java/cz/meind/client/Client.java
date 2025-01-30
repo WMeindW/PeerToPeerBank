@@ -82,16 +82,14 @@ public class Client {
             tasks.add(() -> {
                 try {
                     Application.logger.info(Client.class, "Contacting bank: " + entry.getKey());
-                    /*
-                    BigInteger total = new BigInteger(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA"))[1]);
-                    Integer number = Integer.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BN"))[1]);
+                    BigInteger total = new BigInteger(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA").strip())[1]);
+                    Integer number = Integer.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BN").strip())[1]);
                     analyzedBanks.add(new Bank(entry.getKey(), total, number));
-                     */
-                    System.out.println(entry.getKey() + " " + execute(entry.getKey(), entry.getValue(), "BA").strip());
-                    System.out.println(entry.getKey() + " " + execute(entry.getKey(), entry.getValue(), "BN").strip());
                     Application.logger.info(Client.class, "Analyzed bank: " + entry.getKey());
+                } catch (SocketTimeoutException e) {
+                    Application.logger.info(Client.class, "Bank timed-out during contact");
                 } catch (Exception e) {
-                    Application.logger.error(Client.class, e);
+                    Application.logger.error(Client.class, "Bank returned incompatible string");
                 }
                 return null;
             });
@@ -109,21 +107,22 @@ public class Client {
         } catch (RuntimeException e) {
             return "ER Banka nenalezena";
         }
-        return execute(ip, port, command);
-    }
-
-    private String execute(String ip, int port, String command) {
-        try (Socket socket = new Socket()) {
-            SocketAddress socketAddress = new InetSocketAddress(ip, port);
-            socket.connect(socketAddress, Application.connectTimeout);
-            socket.setSoTimeout(Application.readTimeout);
-            write(command, new PrintWriter(socket.getOutputStream(), true));
-            return read(new BufferedReader(new InputStreamReader(socket.getInputStream())));
+        try {
+            return execute(ip, port, command);
         } catch (SocketTimeoutException e) {
             return "ER Odpověď banky trvala příliš dlouho";
         } catch (IOException e) {
             Application.logger.error(Client.class, e);
             return "ER Nastala chyba při připojování k bance";
         }
+    }
+
+    private String execute(String ip, int port, String command) throws IOException {
+        Socket socket = new Socket();
+        SocketAddress socketAddress = new InetSocketAddress(ip, port);
+        socket.connect(socketAddress, Application.connectTimeout);
+        socket.setSoTimeout(Application.readTimeout);
+        write(command, new PrintWriter(socket.getOutputStream(), true));
+        return read(new BufferedReader(new InputStreamReader(socket.getInputStream())));
     }
 }
