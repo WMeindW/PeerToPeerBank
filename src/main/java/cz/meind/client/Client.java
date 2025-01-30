@@ -1,8 +1,10 @@
 package cz.meind.client;
 
 import cz.meind.application.Application;
+import cz.meind.service.Parser;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -78,11 +80,9 @@ public class Client {
             tasks.add(() -> {
                 try {
                     Application.logger.info(Client.class, "Contacting bank: " + entry.getKey());
-                    //BigInteger total = new BigInteger(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA").strip())[1]);
-                    //Integer number = Integer.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BN").strip())[1]);
-                    //analyzedBanks.add(new Bank(entry.getKey(), total, number));
-                    System.out.println(execute(entry.getKey(), entry.getValue(), "BA").strip());
-                    System.out.println(execute(entry.getKey(), entry.getValue(), "BN").strip());
+                    BigInteger total = new BigInteger(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA").strip())[1]);
+                    Integer number = Integer.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BN").strip())[1]);
+                    analyzedBanks.add(new Bank(entry.getKey(), total, number));
                     Application.logger.info(Client.class, "Analyzed bank: " + entry.getKey());
                 } catch (SocketTimeoutException e) {
                     Application.logger.info(Client.class, "Bank timed-out during contact");
@@ -116,7 +116,7 @@ public class Client {
     }
 
     private String execute(String ip, int port, String command) throws IOException {
-        try (Socket socket = new Socket()){
+        try (Socket socket = new Socket()) {
             SocketAddress socketAddress = new InetSocketAddress(ip, port);
             socket.connect(socketAddress, Application.connectTimeout);
             socket.setSoTimeout(Application.readTimeout);
