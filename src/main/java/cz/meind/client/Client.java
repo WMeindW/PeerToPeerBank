@@ -80,10 +80,17 @@ public class Client {
         for (Map.Entry<String, Integer> entry : scanNetwork().entrySet()) {
             tasks.add(() -> {
                 try {
+                    Application.logger.info(Client.class, "Contacting bank: " + entry.getKey());
+                    /*
                     BigInteger total = new BigInteger(Parser.parse(execute(entry.getKey(), entry.getValue(), "BA"))[1]);
                     Integer number = Integer.valueOf(Parser.parse(execute(entry.getKey(), entry.getValue(), "BN"))[1]);
                     analyzedBanks.add(new Bank(entry.getKey(), total, number));
-                } catch (Exception ignored) {
+                     */
+                    System.out.println(entry.getKey() + " " + execute(entry.getKey(), entry.getValue(), "BA").strip());
+                    System.out.println(entry.getKey() + " " + execute(entry.getKey(), entry.getValue(), "BN").strip());
+                    Application.logger.info(Client.class, "Analyzed bank: " + entry.getKey());
+                } catch (Exception e) {
+                    Application.logger.error(Client.class, e);
                 }
                 return null;
             });

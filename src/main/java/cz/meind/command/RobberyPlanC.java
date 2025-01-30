@@ -21,6 +21,7 @@ public class RobberyPlanC implements Command {
         LinkedList<Bank> banks;
         try {
             banks = Application.client.analyzeBanks();
+            System.out.println(banks);
         } catch (InterruptedException e) {
             return "ER Vypršel čas na analýzu bank";
         }
