@@ -73,7 +73,6 @@ public class Handler implements Runnable {
                     write(executeWithTimeout(() -> Application.server.getCommand(args[0]).execute(args), Application.taskTimeout));
                 }
             }
-
         } catch (SocketException e) {
             Application.logger.error(Handler.class, "Closing socket");
         } catch (IOException e) {
@@ -89,7 +88,7 @@ public class Handler implements Runnable {
             PrintWriter writer = new PrintWriter(out, true);
             writer.println(message);
         } catch (Exception e) {
-            Application.logger.error(Handler.class,"Could not write " + message + " to client socket");
+            Application.logger.error(Handler.class, "Could not write " + message + " to client socket");
         }
 
     }
@@ -97,18 +96,18 @@ public class Handler implements Runnable {
     private String executeWithTimeout(Callable<String> task, int timeoutInMilliseconds) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<String> future = executor.submit(task);
-
+        String value = "ER";
         try {
-            return future.get(timeoutInMilliseconds, TimeUnit.MILLISECONDS);
+            return value = future.get(timeoutInMilliseconds, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            return "ER Úkol trval příliš dlouho";
+            return value = "ER Úkol trval příliš dlouho";
         } catch (Exception e) {
             Application.logger.error(Handler.class, e);
-            return "ER Nastala neznámá chyba - zkontrolujte formát příkazu";
+            return value = "ER Nastala neznámá chyba - zkontrolujte formát příkazu";
         } finally {
-            Application.logger.info(Handler.class, "Task finished");
-            future.cancel(true); // Cancel the task if still running
-            executor.shutdownNow(); // Shut down the executor
+            Application.logger.info(Handler.class, "Task with response \"" + value + "\" finished");
+            future.cancel(true);
+            executor.shutdownNow();
         }
     }
 

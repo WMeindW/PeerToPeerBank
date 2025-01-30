@@ -45,7 +45,7 @@ public class Listener {
             while (true) {
                 Socket clientSocket = server.accept();
                 Application.server.handle(clientSocket);
-                Application.logger.info(Listener.class, "Accepted client socket");
+                Application.logger.info(Listener.class, "Accepted client socket from " + clientSocket.getInetAddress().toString().replace("/",""));
             }
         } catch (IOException e) {
             Application.logger.error(Listener.class, "Fatal server error: " + e);
