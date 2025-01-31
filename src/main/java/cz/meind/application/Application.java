@@ -10,8 +10,12 @@ import cz.meind.service.asynch.Daemon;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 public class Application {
@@ -37,7 +41,7 @@ public class Application {
 
     public static DatabaseContext database;
 
-    public static String hostAddress = "127.0.0.1";
+    public static String hostAddress = findLocalInetAddress();
 
     public static int kickTimeout = 15;
 
@@ -141,13 +145,26 @@ public class Application {
             dbUser = properties.getProperty("database.user");
             dbPassword = properties.getProperty("database.password");
             logFilePath = properties.getProperty("log.file.path");
-            hostAddress = properties.getProperty("server.host.address");
+            if (properties.getProperty("server.host.address") != null)
+                hostAddress = properties.getProperty("server.host.address");
             port = Integer.parseInt(properties.getProperty("server.port"));
             poolSize = Integer.parseInt(properties.getProperty("server.thread.pool.size"));
             System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + "Found config at " + configFilePath);
             System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + properties);
         } catch (Exception e) {
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+    }
+
+    private static String findLocalInetAddress() {
+        try {
+            Optional<InetAddress> ia = Arrays.stream(InetAddress.getAllByName(InetAddress.getLocalHost().getHostName())).filter(InetAddress::isSiteLocalAddress).findFirst();
+            if (ia.isPresent()) return ia.get().toString().split("/")[1];
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: Could not resolve local host, defaulting to default or config address");
+            return null;
+        } catch (UnknownHostException e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: Could not resolve local host, defaulting to default or config address");
+            return null;
         }
     }
 }
