@@ -46,7 +46,7 @@ public class Logger {
     private void createLogFile(String path) throws IOException {
         logFile = new File(path);
         if (!Files.exists(Path.of(logFile.getPath()))) {
-            Files.createDirectories(Path.of(logFile.getParent()));
+            if (logFile.getParent() != null) Files.createDirectories(Path.of(logFile.getParent()));
             Files.createFile(Path.of(logFile.getPath()));
         }
         write("https://github.com/WMeindW \n\n\nDaniel Linda, cz.meind.PeerToPeerBank");

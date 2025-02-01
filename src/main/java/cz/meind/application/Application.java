@@ -12,6 +12,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -133,27 +136,77 @@ public class Application {
             properties.load(new FileInputStream(configFilePath));
         } catch (IOException e) {
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+            return;
         }
+        System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + "Found config at " + configFilePath);
         try {
             taskTimeout = Integer.parseInt(properties.getProperty("handler.task.timeout"));
-            readTimeout = Integer.parseInt(properties.getProperty("server.client.read.timeout"));
-            connectTimeout = Integer.parseInt(properties.getProperty("server.client.connect.timeout"));
-            scanThreadCount = Integer.parseInt(properties.getProperty("server.client.scan.threads"));
-            scanTimeout = Integer.parseInt(properties.getProperty("server.client.scan.timeout"));
-            kickTimeout = Integer.parseInt(properties.getProperty("server.client.timeout"));
-            dbUrl = properties.getProperty("database.url");
-            dbUser = properties.getProperty("database.user");
-            dbPassword = properties.getProperty("database.password");
-            logFilePath = properties.getProperty("log.file.path");
-            if (properties.getProperty("server.host.address") != null)
-                hostAddress = properties.getProperty("server.host.address");
-            port = Integer.parseInt(properties.getProperty("server.port"));
-            poolSize = Integer.parseInt(properties.getProperty("server.thread.pool.size"));
-            System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + "Found config at " + configFilePath);
-            System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + properties);
         } catch (Exception e) {
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
         }
+        try {
+            readTimeout = Integer.parseInt(properties.getProperty("server.client.read.timeout"));
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            connectTimeout = Integer.parseInt(properties.getProperty("server.client.connect.timeout"));
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            scanThreadCount = Integer.parseInt(properties.getProperty("server.client.scan.threads"));
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            scanTimeout = Integer.parseInt(properties.getProperty("server.client.scan.timeout"));
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            kickTimeout = Integer.parseInt(properties.getProperty("server.client.timeout"));
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            dbUrl = properties.getProperty("database.url");
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            dbUser = properties.getProperty("database.user");
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            dbPassword = properties.getProperty("database.password");
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            if (properties.getProperty("log.file.path") != null) logFilePath = properties.getProperty("log.file.path");
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            if (properties.getProperty("server.host.address") != null)
+                hostAddress = properties.getProperty("server.host.address");
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            port = Integer.parseInt(properties.getProperty("server.port"));
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+        try {
+            poolSize = Integer.parseInt(properties.getProperty("server.thread.pool.size"));
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
+
+        System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + properties);
     }
 
     private static String findLocalInetAddress() {
