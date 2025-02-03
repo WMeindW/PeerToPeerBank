@@ -71,8 +71,8 @@ public class Application {
         initializeConfig(args);
         initializeLogger();
         initializeDatabaseProfile();
-        initializeDaemon();
         initializeServer();
+        initializeDaemon();
     }
 
     /**

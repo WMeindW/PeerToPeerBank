@@ -14,6 +14,16 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client {
+    public Client() {
+        Application.logger.info(Client.class, "Assuming ip address " + Application.hostAddress);
+        Application.logger.info(Client.class, "Performing rudimentary network scan");
+        try {
+            scanNetwork();
+        } catch (InterruptedException e) {
+            Application.logger.error(Client.class, "Interrupted network scan");
+        }
+    }
+
     private boolean testAlive(String ip, int port, int timeout) {
         try (Socket socket = new Socket()) {
             SocketAddress socketAddress = new InetSocketAddress(ip, port);
