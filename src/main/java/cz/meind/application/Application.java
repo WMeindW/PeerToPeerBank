@@ -73,6 +73,7 @@ public class Application {
         initializeDatabaseProfile();
         initializeServer();
         initializeDaemon();
+        Application.logger.info(Application.class,"Start complete");
     }
 
     /**

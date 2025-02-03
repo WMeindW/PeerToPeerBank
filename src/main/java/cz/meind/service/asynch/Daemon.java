@@ -19,7 +19,7 @@ public class Daemon implements Runnable {
                 for (Map.Entry<String, Handler> entry : Application.server.getHandlers().entrySet()) {
                     Handler h = entry.getValue();
                     h.incrementTimestamp();
-                    if (h.getTimestamp() > Application.kickTimeout) h.close();
+                    if (h.getTimestamp() * 1000 > Application.kickTimeout * 1000) h.close();
                 }
             }
         } catch (InterruptedException e) {

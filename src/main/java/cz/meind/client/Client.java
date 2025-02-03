@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client {
     public Client() {
-        Application.logger.info(Client.class, "Assuming ip address " + Application.hostAddress);
+        Application.logger.info(Client.class, "Client assuming ip address " + Application.hostAddress);
         Application.logger.info(Client.class, "Performing rudimentary network scan");
         try {
             scanNetwork();
