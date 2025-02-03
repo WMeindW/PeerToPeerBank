@@ -21,11 +21,10 @@ public class AccountWithdrawC implements Command {
         } catch (Exception e) {
             return "ER Špatný formát argumentů";
         }
-
-        Optional<Account> a = mapper.fetchAll(Account.class).stream().filter(acc -> acc.getAccountNumber() == accountNumber).findFirst();
-        if (a.isEmpty()) return "ER Účet s tímto číslem neexistuje";
         if (!bankCode.equals(Application.hostAddress))
             return Application.client.command(bankCode, args[0] + " " + args[1] + " " + args[2]);
+        Optional<Account> a = mapper.fetchAll(Account.class).stream().filter(acc -> acc.getAccountNumber() == accountNumber).findFirst();
+        if (a.isEmpty()) return "ER Účet s tímto číslem neexistuje";
 
         Account account = a.get();
         if (balanceToSubtract.compareTo(account.getBalance()) > 0) return "ER Nedostatek finančních prostředků";
