@@ -19,7 +19,10 @@ public class Daemon implements Runnable {
                 for (Map.Entry<String, Handler> entry : Application.server.getHandlers().entrySet()) {
                     Handler h = entry.getValue();
                     h.incrementTimestamp();
-                    if (h.getTimestamp() * 1000 > Application.kickTimeout * 1000) h.close();
+                    if (h.getTimestamp() * 1000 > Application.kickTimeout) {
+                        Application.logger.info(Daemon.class, "Client timed-out");
+                        h.close();
+                    }
                 }
             }
         } catch (InterruptedException e) {
@@ -38,6 +41,8 @@ public class Daemon implements Runnable {
         Application.server.shutdownExecutor();
         Application.server.getServerThread().interrupt();
         Application.logger.info(Daemon.class, "Interrupted server");
+        Application.logger.info(Daemon.class, "Closing database connection");
+        Application.database.closeConnection();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

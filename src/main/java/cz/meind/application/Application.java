@@ -84,7 +84,7 @@ public class Application {
      */
     private static void initializeDaemon() {
         Runtime.getRuntime().addShutdownHook(new Thread(Daemon::shutdown));
-        Application.logger.info(Daemon.class, "Starting daemon.");
+        Application.logger.info(Daemon.class, "Starting daemon");
         Thread t = new Thread(new Daemon());
         t.setDaemon(true);
         t.start();
@@ -97,7 +97,7 @@ public class Application {
      */
     private static void initializeServer() {
         client = new Client();
-        Application.logger.info(Server.class, "Starting server.");
+        Application.logger.info(Server.class, "Starting server");
         server = new Server();
     }
 
@@ -108,13 +108,13 @@ public class Application {
      */
     private static void initializeLogger() {
         logger = new Logger(logFilePath);
-        logger.info(Application.class, "Starting application.");
+        logger.info(Application.class, "Starting application");
     }
 
     private static void initializeDatabaseProfile() {
-        Application.logger.info(Application.class, "Initializing database profile.");
+        Application.logger.info(Application.class, "Initializing database profile");
         database = new DatabaseContext();
-        Application.logger.info(Application.class, "Creating connection.");
+        Application.logger.info(Application.class, "Creating connection");
         mapper = new ObjectMapper(Application.database.getConnection());
     }
 

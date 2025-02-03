@@ -20,6 +20,7 @@ public class DatabaseContext {
         try {
             if (connection == null)
                 connection = DriverManager.getConnection(Application.dbUrl, Application.dbUser, Application.dbPassword);
+            Application.logger.info(DatabaseContext.class, "Connected to database " + Application.dbUrl + " as " + Application.dbUser);
             return connection;
         } catch (SQLException e) {
             Application.logger.error(DatabaseContext.class, e);
@@ -28,8 +29,6 @@ public class DatabaseContext {
     }
 
     public void closeConnection() {
-        Application.logger.info(DatabaseContext.class,"Closing connection.");
-
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
@@ -40,7 +39,7 @@ public class DatabaseContext {
     }
 
     public DatabaseContext() {
-        Application.logger.info(DatabaseContext.class, "Initializing database context.");
+        Application.logger.info(DatabaseContext.class, "Initializing database context");
         Reflections reflections = new Reflections("cz.meind");
         reflections.getTypesAnnotatedWith(Entity.class).forEach(entity -> entities.put(entity, EntityParser.parseEntity(entity)));
     }
