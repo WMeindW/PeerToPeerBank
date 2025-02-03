@@ -9,9 +9,9 @@ import java.util.Map;
  * This class represents a daemon that continuously monitors the application.
  * It implements the Runnable interface to be executed in a separate thread.
  */
-public class Daemon implements Runnable {
-    @Override
-    public void run() {
+public class Daemon {
+
+    public static void run() {
         Application.logger.info(Daemon.class, "Monitoring started");
         try {
             while (true) {
@@ -19,7 +19,7 @@ public class Daemon implements Runnable {
                 for (Map.Entry<String, Handler> entry : Application.server.getHandlers().entrySet()) {
                     Handler h = entry.getValue();
                     h.incrementTimestamp();
-                    if (h.getTimestamp() * 1000 > Application.kickTimeout) {
+                    if (h.getTimestamp() > Application.kickTimeout) {
                         Application.logger.info(Daemon.class, "Client timed-out");
                         h.close();
                     }

@@ -73,7 +73,7 @@ public class Application {
         initializeDatabaseProfile();
         initializeServer();
         initializeDaemon();
-        Application.logger.info(Application.class,"Start complete");
+        Application.logger.info(Application.class, "Start complete");
     }
 
     /**
@@ -85,7 +85,7 @@ public class Application {
     private static void initializeDaemon() {
         Runtime.getRuntime().addShutdownHook(new Thread(Daemon::shutdown));
         Application.logger.info(Daemon.class, "Starting daemon");
-        Thread t = new Thread(new Daemon());
+        Thread t = new Thread(Daemon::run);
         t.setDaemon(true);
         t.start();
     }
