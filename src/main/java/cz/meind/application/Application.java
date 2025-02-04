@@ -12,14 +12,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 public class Application {
     public static Logger logger;
@@ -28,17 +22,17 @@ public class Application {
 
     public static String configFilePath = "src/main/resources/application.properties";
 
-    public static String logFilePath = "/home/ubuntu/mandis/log/log.txt";
+    public static String logFilePath = "log/log.txt";
 
     public static int port = 8088;
 
     public static int poolSize = 16;
 
-    public static String dbUrl = "jdbc:mysql://localhost:3306/andrem";
+    public static String dbUrl = "jdbc:mysql://localhost:3306/ptpbnk";
 
     public static String dbUser = "root";
 
-    public static String dbPassword = "password";
+    public static String dbPassword = "student";
 
     public static ObjectMapper mapper;
 
@@ -57,6 +51,8 @@ public class Application {
     public static int scanThreadCount = 5;
 
     public static int taskTimeout = 5000;
+
+    public static List<Integer> portList = generatePortList(65525, 65535);
 
     public static Client client;
 
@@ -138,7 +134,14 @@ public class Application {
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
             return;
         }
+
         System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] INFO: " + "Found config at " + configFilePath);
+        try {
+            String[] portRange = properties.getProperty("client.scan.port.range").split(",");
+            portList = generatePortList(Integer.valueOf(portRange[0]), Integer.valueOf(portRange[1]));
+        } catch (Exception e) {
+            System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
+        }
         try {
             taskTimeout = Integer.parseInt(properties.getProperty("handler.task.timeout"));
         } catch (Exception e) {
@@ -219,5 +222,13 @@ public class Application {
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] ERROR: Could not resolve local host, defaulting to default or config address");
             return null;
         }
+    }
+
+    private static List<Integer> generatePortList(Integer from, Integer to) {
+        LinkedList<Integer> portList = new LinkedList<>();
+        for (int i = from; i <= to; i++) {
+            portList.add(i);
+        }
+        return portList;
     }
 }

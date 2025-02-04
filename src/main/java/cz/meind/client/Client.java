@@ -36,7 +36,7 @@ public class Client {
     }
 
     private int scanHost(String hostIp) {
-        for (int i = 65525; i <= 65535; i++) {
+        for (int i : Application.portList) {
             if (testAlive(hostIp, i, Application.scanTimeout)) {
                 Application.logger.info(Client.class, "Found bank at: " + hostIp + "/" + i);
                 return i;
