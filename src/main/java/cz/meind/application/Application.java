@@ -64,6 +64,7 @@ public class Application {
      *             to the configuration file. If provided, it overrides the default config file path.
      */
     public static void run(String[] args) {
+        Thread.currentThread().setName("main");
         initializeConfig(args);
         initializeLogger();
         initializeDatabaseProfile();
@@ -78,9 +79,12 @@ public class Application {
      * creates and starts a new daemon thread.
      */
     private static void initializeDaemon() {
-        Runtime.getRuntime().addShutdownHook(new Thread(Daemon::shutdown));
+        Thread st = new Thread(Daemon::shutdown);
+        st.setName("shutdown");
+        Runtime.getRuntime().addShutdownHook(st);
         Application.logger.info(Daemon.class, "Starting daemon");
         Thread t = new Thread(Daemon::run);
+        t.setName("daemon");
         t.setDaemon(true);
         t.start();
     }

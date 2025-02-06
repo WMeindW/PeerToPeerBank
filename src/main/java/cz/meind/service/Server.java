@@ -24,7 +24,7 @@ public class Server {
         populateCommands();
         executor = Executors.newFixedThreadPool(Application.poolSize);
         serverThread = new Thread(Listener::listen);
-        serverThread.setName("server");
+        serverThread.setName("listener");
         serverThread.start();
     }
 
