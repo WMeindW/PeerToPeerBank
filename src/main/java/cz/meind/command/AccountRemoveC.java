@@ -4,12 +4,14 @@ import cz.meind.application.Application;
 import cz.meind.client.Client;
 import cz.meind.database.entities.Account;
 
+import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.Optional;
 
 import static cz.meind.application.Application.mapper;
 
 public class AccountRemoveC implements Command {
+    @Nonnull
     @Override
     public String execute(String[] args) {
         if (args.length != 2) return "ER Špatný počet argumentů";

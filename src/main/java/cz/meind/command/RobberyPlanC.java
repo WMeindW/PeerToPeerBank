@@ -3,11 +3,13 @@ package cz.meind.command;
 import cz.meind.application.Application;
 import cz.meind.client.Bank;
 
+import javax.annotation.Nonnull;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.LinkedList;
 
 public class RobberyPlanC implements Command {
+    @Nonnull
     @Override
     public String execute(String[] args) {
         BigInteger totalToSteal;

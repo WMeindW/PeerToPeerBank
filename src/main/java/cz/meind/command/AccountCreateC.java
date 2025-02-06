@@ -3,12 +3,14 @@ package cz.meind.command;
 import cz.meind.application.Application;
 import cz.meind.database.entities.Account;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import static cz.meind.application.Application.mapper;
 
 public class AccountCreateC implements Command {
+    @Nonnull
     @Override
     public String execute(String[] args) {
         ArrayList<Account> al = (ArrayList<Account>) mapper.fetchAll(Account.class);

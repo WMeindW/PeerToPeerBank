@@ -3,11 +3,13 @@ package cz.meind.command;
 import cz.meind.application.Application;
 import cz.meind.database.entities.Account;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 import static cz.meind.application.Application.mapper;
 
 public class AccountWithdrawC implements Command {
+    @Nonnull
     @Override
     public String execute(String[] args) {
         if (args.length != 3) return "ER Špatný počet argumentů";
