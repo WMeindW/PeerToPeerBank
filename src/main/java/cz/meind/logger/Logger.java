@@ -24,7 +24,7 @@ public class Logger {
         try {
             createLogFile(path);
         } catch (IOException e) {
-            System.out.println(Logger.class + " [" + LocalDateTime.now() + "] ERROR: " + e);
+            System.out.println(Logger.class + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] ERROR: " + e);
         }
     }
 
@@ -82,8 +82,8 @@ public class Logger {
      * @param message The error message.
      */
     public void error(Class<?> c, String message) {
-        System.err.println(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + message);
-        write(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + message);
+        System.err.println(c.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] ERROR: " + message);
+        write(c.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] ERROR: " + message);
     }
 
     /**
@@ -93,7 +93,7 @@ public class Logger {
      * @param e The exception.
      */
     public void error(Class<?> c, Exception e) {
-        System.err.println(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e.toString());
+        System.err.println(c.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] ERROR: " + e.toString());
         write(c.getName() + " [" + LocalDateTime.now() + "] ERROR: " + e);
     }
 
@@ -104,8 +104,8 @@ public class Logger {
      * @param message The informational message.
      */
     public void info(Class<?> c, String message) {
-        System.out.println(c.getName() + " [" + LocalDateTime.now() + "] INFO: " + message);
-        write(c.getName() + " [" + LocalDateTime.now() + "] INFO: " + message);
+        System.out.println(c.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] INFO: " + message);
+        write(c.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] INFO: " + message);
     }
 
     /**
@@ -115,7 +115,7 @@ public class Logger {
      * @param message The warning message.
      */
     public void warn(Class<?> c, String message) {
-        System.out.println(c.getName() + " [" + LocalDateTime.now() + "] WARN: " + message);
-        write(c.getName() + " [" + LocalDateTime.now() + "] WARN: " + message);
+        System.out.println(c.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] WARN: " + message);
+        write(c.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] WARN: " + message);
     }
 }
