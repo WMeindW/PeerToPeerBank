@@ -216,10 +216,20 @@ public class Application {
         System.out.println(Application.class.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] INFO: " + properties);
     }
 
+    /**
+     * Finds the local InetAddress using the site local address.
+     * If no site local address is found, it logs an error message and returns null.
+     *
+     * @return The local InetAddress in string format, or null if not found.
+     */
     private static String findLocalInetAddress() {
         try {
             Optional<InetAddress> ia = Arrays.stream(InetAddress.getAllByName(InetAddress.getLocalHost().getHostName())).filter(InetAddress::isSiteLocalAddress).findFirst();
-            if (ia.isPresent()) return ia.get().toString().split("/")[1];
+
+            if (ia.isPresent()) {
+                return ia.get().toString().split("/")[1];
+            }
+
             System.err.println(Application.class.getName() + " [" + LocalDateTime.now() + "] [" + Thread.currentThread() + "] ERROR: Could not resolve local host, defaulting to default or config address");
             return null;
         } catch (UnknownHostException e) {
@@ -228,6 +238,14 @@ public class Application {
         }
     }
 
+    /**
+     * Generates a list of integers representing a range of ports.
+     *
+     * @param from The starting port number (inclusive).
+     * @param to   The ending port number (inclusive).
+     * @return A LinkedList of integers representing the port range from 'from' to 'to'.
+     * If 'from' is greater than 'to', an empty LinkedList is returned.
+     */
     private static List<Integer> generatePortList(Integer from, Integer to) {
         LinkedList<Integer> portList = new LinkedList<>();
         for (int i = from; i <= to; i++) {

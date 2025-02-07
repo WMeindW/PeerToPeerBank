@@ -7,6 +7,7 @@ import cz.meind.service.Parser;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.concurrent.*;
 
 /**
@@ -88,15 +89,6 @@ public class Handler implements Runnable {
         }
     }
 
-    /**
-     * Writes a message to the client socket.
-     *
-     * @param message The message to be sent to the client.
-     *                <p>
-     *                This method checks if the client connection is closed. If not, it attempts to write the given message to the client socket.
-     *                If an exception occurs during the writing process, an error message is logged using the application's logger.
-     * @return void
-     */
     private void write(String message) {
         if (closed) return;
         try {
@@ -105,16 +97,16 @@ public class Handler implements Runnable {
         } catch (Exception e) {
             Application.logger.error(Handler.class, "Could not write " + message + " to client socket");
         }
+
     }
 
     /**
-     * Executes a given task with a specified timeout.
+     * Executes the given task with a specified timeout.
      *
-     * @param task                  The task to be executed. It should be a Callable that returns a String.
+     * @param task                  The callable task to be executed.
      * @param timeoutInMilliseconds The maximum time to wait for the task to complete.
-     * @return The result of the task if it completes within the timeout.
-     * If the task does not complete within the timeout, it returns a predefined error message.
-     * If an exception occurs during the execution of the task, it logs the error and returns a predefined error message.
+     * @return The result of the task if it completes within the timeout, otherwise "ER Úkol trval příliš dlouho".
+     * If an error occurs during task execution, returns "ER Nastala neznámá chyba - zkontrolujte formát příkazu".
      */
     private String executeWithTimeout(Callable<String> task, int timeoutInMilliseconds) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
