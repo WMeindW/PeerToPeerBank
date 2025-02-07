@@ -10,12 +10,29 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class represents the context for interacting with a database.
+ * It manages the connection to the database, keeps track of entities,
+ * and provides methods for connecting and closing the connection.
+ */
 public class DatabaseContext {
 
+    /**
+     * A map of entity classes to their corresponding metadata.
+     */
     public Map<Class<?>, EntityMetadata> entities = new HashMap<>();
 
+    /**
+     * The database connection.
+     */
     private Connection connection;
 
+    /**
+     * Attempts to establish a connection to the database.
+     * If a connection is already established, it returns the existing connection.
+     *
+     * @return The database connection.
+     */
     public Connection getConnection() {
         try {
             if (connection == null)
@@ -28,6 +45,9 @@ public class DatabaseContext {
         return null;
     }
 
+    /**
+     * Closes the database connection if it is open.
+     */
     public void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -38,6 +58,10 @@ public class DatabaseContext {
         }
     }
 
+    /**
+     * Initializes the database context by scanning for entities annotated with {@link Entity}
+     * and parsing their metadata using {@link EntityParser}.
+     */
     public DatabaseContext() {
         Application.logger.info(DatabaseContext.class, "Initializing database context");
         Reflections reflections = new Reflections("cz.meind");

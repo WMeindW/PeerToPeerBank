@@ -5,12 +5,14 @@ import cz.meind.application.Application;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * This class represents a daemon that continuously monitors the application.
- * It implements the Runnable interface to be executed in a separate thread.
- */
 public class Daemon {
 
+    /**
+     * This method starts the daemon that continuously monitors the application.
+     * The daemon runs in a separate thread and checks the status of each client handler.
+     * If a client handler has been inactive for more than the specified timeout, the client is considered timed-out and the handler is closed.
+     *
+     */
     public static void run() {
         Application.logger.info(Daemon.class, "Monitoring started");
         try {

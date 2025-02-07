@@ -7,7 +7,6 @@ import cz.meind.service.Parser;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Arrays;
 import java.util.concurrent.*;
 
 /**
@@ -61,6 +60,13 @@ public class Handler implements Runnable {
         return timestamp;
     }
 
+    /**
+     * This method is responsible for handling incoming client connections and processing their requests.
+     * It reads instructions from the client, executes them, and sends responses back.
+     * The method runs in an infinite loop until the client disconnects or an error occurs.
+     * If the client sends an "exit" command, an IOException is thrown to close the connection.
+     * The method also manages the timestamp and closes the client connection when necessary.
+     */
     public void run() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String instruction;
@@ -82,6 +88,15 @@ public class Handler implements Runnable {
         }
     }
 
+    /**
+     * Writes a message to the client socket.
+     *
+     * @param message The message to be sent to the client.
+     *                <p>
+     *                This method checks if the client connection is closed. If not, it attempts to write the given message to the client socket.
+     *                If an exception occurs during the writing process, an error message is logged using the application's logger.
+     * @return void
+     */
     private void write(String message) {
         if (closed) return;
         try {
@@ -90,9 +105,17 @@ public class Handler implements Runnable {
         } catch (Exception e) {
             Application.logger.error(Handler.class, "Could not write " + message + " to client socket");
         }
-
     }
 
+    /**
+     * Executes a given task with a specified timeout.
+     *
+     * @param task                  The task to be executed. It should be a Callable that returns a String.
+     * @param timeoutInMilliseconds The maximum time to wait for the task to complete.
+     * @return The result of the task if it completes within the timeout.
+     * If the task does not complete within the timeout, it returns a predefined error message.
+     * If an exception occurs during the execution of the task, it logs the error and returns a predefined error message.
+     */
     private String executeWithTimeout(Callable<String> task, int timeoutInMilliseconds) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<String> future = executor.submit(task);
