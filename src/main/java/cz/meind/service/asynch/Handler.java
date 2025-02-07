@@ -61,6 +61,13 @@ public class Handler implements Runnable {
         return timestamp;
     }
 
+    /**
+     * This method is responsible for handling incoming client connections and processing their requests.
+     * It reads instructions from the client, executes them, and sends responses back.
+     * The method runs in an infinite loop until the client disconnects or an error occurs.
+     * If the client sends an "exit" command, an IOException is thrown to close the connection.
+     * The method also manages the timestamp and closes the client connection when necessary.
+     */
     public void run() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String instruction;
@@ -93,6 +100,14 @@ public class Handler implements Runnable {
 
     }
 
+    /**
+     * Executes the given task with a specified timeout.
+     *
+     * @param task                  The callable task to be executed.
+     * @param timeoutInMilliseconds The maximum time to wait for the task to complete.
+     * @return The result of the task if it completes within the timeout, otherwise "ER Úkol trval příliš dlouho".
+     * If an error occurs during task execution, returns "ER Nastala neznámá chyba - zkontrolujte formát příkazu".
+     */
     private String executeWithTimeout(Callable<String> task, int timeoutInMilliseconds) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<String> future = executor.submit(task);
