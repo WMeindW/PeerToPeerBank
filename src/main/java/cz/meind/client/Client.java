@@ -95,9 +95,9 @@ public class Client {
                     analyzedBanks.add(new Bank(entry.getKey(), total, number));
                     Application.logger.info(Client.class, "Analyzed bank: " + entry.getKey());
                 } catch (SocketTimeoutException e) {
-                    Application.logger.info(Client.class, "Bank timed-out during contact");
+                    Application.logger.info(Client.class, "Bank " + entry.getKey() + " timed-out during contact");
                 } catch (Exception e) {
-                    Application.logger.error(Client.class, "Bank returned incompatible string");
+                    Application.logger.error(Client.class, "Bank " + entry.getKey() + " returned incompatible string");
                 }
                 return null;
             });
