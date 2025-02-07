@@ -44,8 +44,11 @@ server.client.read.timeout=2500
 handler.task.timeout=15000
 ```
 
-## Start-up
-
+## Start-up & Install
+- download from `https://daniellinda.net/bank.zip`
+- navigate to installation folder
+- start command line in said folder
+- execute startup script written below
 - default location of a config is next to the executable
 
 - `java -jar bank.jar [config file path]`
