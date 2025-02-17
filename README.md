@@ -74,7 +74,7 @@ handler.task.timeout=15000
 
 ## Commands
 
-| Name                   | Code | Example                        | Success             | Error          |
+| Name                   | Code | Example                        | Expected            | Error          |
 |------------------------|------|--------------------------------|---------------------|----------------|
 | Bank code              | BC   | BC                             | BC `<ip>`           | ER `<message>` |
 | Account create         | AC   | AC                             | AC `<account>/<ip>` | ER `<message>` |
@@ -93,4 +93,8 @@ handler.task.timeout=15000
 
 ## Dependencies
 
-- mysql-connector
+- [mysql-connector](https://dev.mysql.com/doc/connector-j/en/)
+
+## Issues
+
+- submit any issues to [GitHub project issue report page](https://github.com/WMeindW/PeerToPeerBank/issues/new)
