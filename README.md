@@ -45,6 +45,7 @@ handler.task.timeout=15000
 ```
 
 ## Start-up & Install
+
 - download from `https://daniellinda.net/bank.zip`
 - navigate to installation folder
 - start command line in said folder
@@ -54,6 +55,7 @@ handler.task.timeout=15000
 - `java -jar bank.jar [config file path]`
 
 ## Reused code
+
 - [Logger](https://github.com/WMeindW/WebServerDatabaseApi/tree/main/src/main/java/cz/meind/logger)
 - [Init](https://github.com/WMeindW/WebServerDatabaseApi/tree/main/src/main/java/cz/meind/application)
 - [Database](https://github.com/WMeindW/WebServerDatabaseApi/tree/main/src/main/java/cz/meind/database)
@@ -63,6 +65,7 @@ handler.task.timeout=15000
 - [Daemon](https://github.com/WMeindW/AsynchronousWebServer/blob/master/src/main/java/cz/meind/service/asynch/Daemon.java)
 
 ## Sources
+
 - Java doc
 - [Berkley Sockets](https://csperkins.org/teaching/2007-2008/networked-systems/lecture04.pdf)
 - [P2P](https://student.cs.uwaterloo.ca/~cs446/1171/Arch_Design_Activity/Peer2Peer.pdf)
@@ -81,3 +84,13 @@ handler.task.timeout=15000
 | Account remove         | AR   | AR `<account>/<ip>`            | AR                  | ER `<message>` |
 | Bank (total) amount    | BA   | BA                             | BA `<number>`       | ER `<message>` |
 | Bank number of clients | BN   | BN                             | BN `<number>`       | ER `<message>` |
+
+## Testing
+
+- tested by peers and collaborators on a private network
+- issues with delay and/or firewall fixed
+- timing and/or timeouts set per network performance
+
+## Dependencies
+
+- mysql-connector
