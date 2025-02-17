@@ -97,4 +97,22 @@ handler.task.timeout=15000
 
 ## Issues
 
+| Name                     | Description                                                                                   | Expected                     | Issue                   | Resolved/Fix                 |
+|--------------------------|-----------------------------------------------------------------------------------------------|------------------------------|-------------------------|------------------------------|
+| Ip resolving issues      | Could not resolve or get IP on system with no usable interfaces                               | Error message                | Crash                   | Yes                          |
+| Scanning issue           | When scanning on low speed/bandwidth network, clients could not be resolved                   | Client resolving and scan    | Timeout occurred        | Increase timeout             |
+| Single file logging      | File can get to big to work with (load into active memory while editing)                      | Separate files based on date | Large file              | No                           |
+| Scanning algorithm speed | In low speed network timeouts have to be increased which causes single task time to skyrocket | Effective scanning           | 15+ second waiting time | Keep scan-timeout reasonable |
+
+### Testers
+
+- [Matěj Červenka](https://github.com/MatejCervenka)
+- [Jakub Hofman](https://github.com/Mithynite)
+
+### Reporting
+
 - submit any issues to [GitHub project issue report page](https://github.com/WMeindW/PeerToPeerBank/issues/new)
+
+### License
+
+- educational use only
